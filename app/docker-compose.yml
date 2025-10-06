@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  oled:
+    container_name: oled-nas
+    build: .
+    restart: unless-stopped
+    network_mode: host
+    devices:
+      - "/dev/i2c-1:/dev/i2c-1"
+    volumes:
+      - "/:/host:ro"          # so DISK(/host) shows host storage usage
+    environment:
+      - MOUNT=/host           # what path to measure for disk usage
+      - UPDATE_SECS=2         # UI refresh interval (seconds)
+      # - IFACE=eth0          # (optional) pick a specific NIC instead of host networking auto-detect
+      # - HOST_IP=192.168.68.50 # (optional) hard-code IP if you prefer
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # If you hit permissions issues with I²C, uncomment the next line temporarily:
+    # privileged: true
